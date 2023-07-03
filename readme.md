@@ -31,7 +31,7 @@ To use the Similarity Tools package, follow these steps:
 Here's an example of how to use the `Classifier` class:
 
 ```python
-from Similarity_Tools import Classifier
+from Classifier import Classifier
 
 # Create an instance of the Classifier class
 classifier = Classifier(method='hybrid', data_file='Data/base_data.csv', text_col='Text', target_col='Disposition')
