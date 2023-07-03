@@ -1,0 +1,8 @@
+fuzzywuzzy
+torch
+sentence-transformers
+pandas
+faiss
+numpy
+datasets
+transformers
