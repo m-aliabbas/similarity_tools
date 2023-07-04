@@ -6,7 +6,8 @@ from FAISS import FAISS
 from utils import *
 
 class SBertMatching:
-    def __init__(self, model_path='sentence-transformers/all-MiniLM-L6-v2', db_name='base', dims=384):
+    def __init__(self, model_path='sentence-transformers/all-MiniLM-L6-v2', db_name='base',
+                 store_name='base.csv', dims=384):
         """
         Initialize the SBertMatching object.
 
@@ -21,8 +22,10 @@ class SBertMatching:
         self.list_of_string = []
         self.list_hash = ''
         self.indexer = FAISS(db_name=db_name, dims=dims)
+        self.store_name = store_name
         try:
-            self.base_df = pd.read_csv('base.csv')
+            print(store_name)
+            self.base_df = pd.read_csv(store_name)
             self.list_of_string = df_to_list(input_df=self.base_df, columns=['text'])
             self.list_hash = get_object_hash(self.list_of_string)
         except FileNotFoundError:
@@ -56,10 +59,10 @@ class SBertMatching:
     
     def enroll_if_list_changes(self,list_of_strings):
         if self.list_hash != get_object_hash(list_of_strings):
-            self.list_of_string = list_of_strings
+            self.list_of_string = list(set(list_of_strings))
             self.base_df = list_to_df(self.list_of_string, columns=['text'])
             self.list_hash = get_object_hash(self.list_of_string)
-            self.base_df.to_csv('base.csv')
+            self.base_df.to_csv(self.store_name)
             self.indexer.refresh()
             self.enroll_list()
 
