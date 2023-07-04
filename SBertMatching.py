@@ -49,6 +49,12 @@ class SBertMatching:
         Returns:
             tuple: A tuple containing the match and distances of the closest matches.
         """
+        self.enroll_if_list_changes(list_of_strings=list_of_strings)
+        query_embeddings = self.embeddings_model.get_embeddings(query_string)
+        results = self.indexer.search(query_embeddings)
+        return self.list_of_string[results[1]], results[0]
+    
+    def enroll_if_list_changes(self,list_of_strings):
         if self.list_hash != get_object_hash(list_of_strings):
             self.list_of_string = list_of_strings
             self.base_df = list_to_df(self.list_of_string, columns=['text'])
@@ -57,7 +63,13 @@ class SBertMatching:
             self.indexer.refresh()
             self.enroll_list()
 
+    def get_matching_list(self,query_string,list_of_strings,num_item=-1,threshold=0.3):
+        self.enroll_if_list_changes(list_of_strings=list_of_strings)
+        if num_item <= 0:
+            num_item = len(list_of_strings)-2
         query_embeddings = self.embeddings_model.get_embeddings(query_string)
-        results = self.indexer.search(query_embeddings)
-        
-        return self.list_of_string[results[1]], results[0]
+        results = self.indexer.search(query_embeddings,num=num_item)
+        indexes = results[1][np.where(results[0]>threshold)]
+        confidence = list(results[0][np.where(results[0]>threshold)])
+        reterive_texts = [self.list_of_string[index] for index in indexes]
+        return reterive_texts , confidence
