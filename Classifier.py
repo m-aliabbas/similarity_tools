@@ -5,7 +5,8 @@ from utils import *
 
 
 class Classifier:
-    def __init__(self, method='Hybrid', data_file='Data/base_data.csv', text_col='Text', target_col='Disposition'):
+    def __init__(self, method='Hybrid', data_file='Data/base_data.csv', text_col='Text', target_col='Disposition',db_path='./Store/clasifier_base',
+                 store_path = './Store/clasifier_base_csv.csv'):
         """
         Initialize the Classifier object.
 
@@ -24,7 +25,7 @@ class Classifier:
         self.X = list(self.df[self.text_col])
         self.Y = list(self.df[self.target_col])
         self.fuzzy_matcher = FuzzyMatcher()
-        self.sbert_matcher = SBertMatching()
+        self.sbert_matcher = SBertMatching(db_name=db_path,store_name=store_path)
 
     def fuzzy_predict(self, query):
         """
