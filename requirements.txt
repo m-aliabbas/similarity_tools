@@ -2,7 +2,7 @@ fuzzywuzzy
 torch
 sentence-transformers
 pandas
-faiss
+faiss-cpu
 numpy
 datasets
 transformers
